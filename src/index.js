@@ -157,6 +157,9 @@ client.on('message', function (topic, message) {
                 su.run('svc power reboot');
                 su.exit();
             }
+            case 'live': {
+                client.publish(process.env.FYO_ID, 'alive');
+            }
         }
     } catch(err) {
         console.log(err);
