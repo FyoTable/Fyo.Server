@@ -147,6 +147,8 @@ client.on('message', function (topic, message) {
             return;
         }
 
+        console.log('MQTT CMD:', msg.command);
+
         switch(msg.command) {
             case 'update': {
                 process.exit(50);
@@ -158,6 +160,7 @@ client.on('message', function (topic, message) {
                 su.exit();
             }
             case 'live': {
+                console.log('publishing to ', process.env.FYO_ID);
                 client.publish(process.env.FYO_ID, 'alive');
             }
         }
