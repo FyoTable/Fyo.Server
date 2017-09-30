@@ -1,0 +1,169 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>HTML5 Pacman</title>
+
+    <style type="text/css">
+      @font-face {
+	    font-family: 'BDCartoonShoutRegular';
+        src: url('BD_Cartoon_Shout-webfont.ttf') format('truetype');
+	    font-weight: normal;
+	    font-style: normal;
+      }
+      #pacman {
+        height:450px;
+        width:342px;
+        margin:20px auto;
+      }
+      #shim {
+        font-family: BDCartoonShoutRegular;
+        position:absolute;
+        visibility:hidden
+      }
+      h1 { font-family: BDCartoonShoutRegular; text-align:center; }
+      body { width:342px; margin:0px auto; font-family:sans-serif; background-color: #222; color: #eee}
+      a { text-decoration:none; }
+    </style>
+
+</head>
+
+<body>
+
+  <div id="shim">shim for font face</div>
+
+  <h1>Pacman</h1>
+
+  <div id="pacman"></div>
+  <script src="pacman/pacman.js"></script>
+  <script src="pacman/modernizr-1.5.min.js"></script>
+
+
+    <script type="text/javascript" src="fyogametable/dist/fyo.min.js"></script>
+
+
+
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+
+        var alphabet = 'abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        function GenUniqueID() {
+            var code = '';
+            for (var i = 0; i < 24; i++) {
+                code += alphabet[Math.floor(Math.random() * (alphabet.length - 1))];
+            }
+            return code;
+        }
+        var socket = io();
+        socket.on('connect', function () {
+            socket.emit('AppHandshakeMsg', {
+                AppIDString: 'Pacman',
+                Controller: 'base_3D_controller'
+            });
+        });
+
+        socket.on('disconnect', function () {
+            document.getElementById('title').innerText = 'Not Connected';
+        });
+
+        socket.on('AppHandshakeMsg', function () {
+            // Server is ready for stuff to happen
+        });
+
+        socket.on('SGHandshakeMsg', function (gamepad) {
+            console.log('new game pad', gamepad);
+        });
+        socket.on('SGReconnectMsg', function (gamepad) {
+            console.log('reconnected game pad', gamepad);
+        });
+        socket.on('SGTimingOutMsg', function (gamepad) {
+            console.log('timing out game pad', gamepad);
+        });
+        socket.on('SGDisconnectMsg', function (gamepad) {
+            console.log('game pad dropped', gamepad);
+        });
+        socket.on('AppEndMsg', function () {
+            console.log('why no play with me? :(')
+        });
+
+        var impPos = {
+            x: 0,
+            y: 0
+        };
+        window.lastController = {
+            x: 0,
+            y: 0
+        };
+
+        socket.on('SGUpdateMsg', function (packet) {
+            console.log(packet);
+            switch (packet.MessageType) {
+                case 'Input': {
+                    var input = {
+                        x2: packet.data["axis 0"],
+                        y2: -packet.data["axis 1"],
+                        x: packet.data["axis 2"],
+                        y: -packet.data["axis 3"],
+                        a: packet.data['button 0'],
+                        b: packet.data['button 1'],
+                        start: packet.data['button 2'],
+                    };
+
+                    if (input.y > 0) {
+                        window.SetDue(UP);
+                    } else if (input.y < 0) {
+                        window.SetDue(DOWN);
+                    } else if (input.x > 0) {
+                        window.SetDue(RIGHT);
+                    } else if (input.x < 0) {
+                        window.SetDue(LEFT);
+                    }
+
+                    if (Math.abs(input.x2) > Math.abs(input.y2)) {
+                        if (input.x2 > 0) {
+                            window.SetDue(RIGHT);
+                        } else {
+                            window.SetDue(LEFT);
+                        }
+                    } else if (Math.abs(input.y2) > Math.abs(input.x2)) {
+                        if (input.y2 > 0) {
+                            window.SetDue(UP);
+                        } else {
+                            window.SetDue(DOWN);
+                        }
+                    }
+
+
+                    if (input.start && !window.lastController.start) {
+                        window.startNewGame();
+                    }
+
+
+                    window.lastController = input;
+                    break;
+                }
+                case 'LeftThumb': {
+                    window.lastController = packet.data;
+                    break;
+                }
+            }
+        });
+
+    </script>
+
+
+  <script>
+    var el = document.getElementById("pacman");
+
+    if (Modernizr.canvas && Modernizr.localstorage &&
+        Modernizr.audio && (Modernizr.audio.ogg || Modernizr.audio.mp3)) {
+      window.setTimeout(function () { PACMAN.init(el, "./pacman/"); }, 0);
+    } else {
+      el.innerHTML = "Sorry, needs a decent browser<br /><small>" +
+        "(firefox 3.6+, Chrome 4+, Opera 10+ and Safari 4+)</small>";
+    }
+  </script>
+
+</body>
+</html>

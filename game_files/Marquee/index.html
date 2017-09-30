@@ -1,0 +1,67 @@
+﻿<!doctype html>
+<html>
+	<head>
+		<title>Fyo Game Table - Marquee</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+		<!-- Base Fyo css -->
+		<link rel="stylesheet" href="/fyogametable/dist/fyo.css">
+		<!-- Specific to this controller -->
+		<link rel="stylesheet" href="/Marquee/styles.css">
+	</head>
+	<body class="body">
+
+		<div class="row">
+			<img class="column column-1" src="/Marquee/img/mobileheader.svg" alt=""/>
+		</div>
+
+		<div>
+			<img class="column column-1" src="/Marquee/img/choose.svg" alt=""/>
+		</div>
+
+		<div id="games" class="row">
+
+		</div>
+
+		<div>
+			<img class="column column-1" src="/Marquee/img/footer.svg" alt=""/>
+		</div>
+
+		<!-- Socket.io is required for FyoGameTable -->
+		<script src="/socket.io/socket.io.js"></script>
+
+		<!-- Minified Fyo Scripts -->
+		<script src="/fyogametable/dist/fyo.js"></script>
+
+		<!-- Controller specific setup -->
+		<script>
+
+            var connecter = new FYO.FyoConnection('Marquee');
+            connecter.on('SGUpdateMsg', function (data) {
+                console.log(data);
+            });
+
+            connecter.on('Games', function (data) {
+                var gamesEl = document.getElementById('games');
+				data.map(function(g) {
+                    // add game
+                    var div = document.createElement('div');
+                    var img = document.createElement('img');
+                    img.setAttribute('src', g.imgURL);
+                    img.setAttribute('class', 'column column-1');
+                    div.appendChild(img);
+                    gamesEl.appendChild(div);
+                    img.onclick = function () {
+                        connecter.Send('Start', g.app);
+                    };
+					console.log(g);
+				});
+			});
+
+			connecter.on('MasterControl', function(data) {
+
+			});
+		</script>
+	</body>
+</html>

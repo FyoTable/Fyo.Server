@@ -1,0 +1,52 @@
+body {
+    background-color: #fff;
+    color: #000;
+}
+
+body #mainContainer {
+    background-color: #fff;
+}
+
+.right {
+    border-right: 1px solid black;
+}
+.top {
+    border-top: 1px solid black;
+}
+.bottom {
+    border-bottom: 1px solid black;
+}
+.left {
+    border-left: 1px solid black;
+}
+
+table tr td {
+    padding: 0;
+    margin: 0;
+    width: 108px;
+    height: 108px;
+}
+table tr {
+    padding: 0;
+    margin: 0;
+}
+
+.cell {
+    width: 108px;
+    height: 108px;
+    background-repeat: no-repeat;
+    background-color: #fff;
+}
+
+.top-color {
+    background-color: #A058AF;
+}
+.bottom-color {
+    background-color: #1D9600;
+}
+.top-bg {
+    position:absolute;  left: 0; right:0; top: 0; bottom: 50%; z-index:-1;
+}
+.bottom-bg {
+    position:absolute;  left: 0; right:0; top: 50%; bottom: 0; z-index:-1;
+}

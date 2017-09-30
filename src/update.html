@@ -1,0 +1,64 @@
+<h1>Updating...</h1>
+<script>
+    
+(function () {
+   'use strict';
+
+    function Requestor(url, method, data) {
+        this.doneCB = null;
+        this.failCB = null;
+
+        var xhr = new XMLHttpRequest();
+        xhr.open(method, url);
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify(data));
+        xhr.responseType = 'json';
+        var self = this;
+        xhr.onreadystatechange = function () {
+            var DONE = 4; // readyState 4 means the request is done.
+            var OK = 200; // status 200 is a successful return.
+            if (xhr.readyState === DONE) {
+                if (xhr.status === OK) {
+                    if(self.doneCB) {
+                        self.doneCB(xhr.response);
+                    }
+                } else {
+                    if(self.failCB) {
+                        console.log('Error: ' + xhr.status); // An error occurred during the request.
+                        self.failCB(xhr.status);
+                    }
+                }
+            }
+        };
+    }
+
+    Requestor.prototype = {
+        done: function(cb) {
+            this.doneCB = cb;
+        },
+        fail: function(cb) {
+            this.failCB = cb;
+        }
+    };
+
+    function CheckIfUpdating() {
+        setTimeout(function() {
+            var req = new Requestor('/updating', 'GET', null);
+            req.done(function(result) {
+                console.log(result, result.updating);
+                if(result.updating !== "false") {
+                    CheckIfUpdating();
+                } else {
+                    console.log('done updating');
+                    window.location = '/';
+                }
+            });
+            req.fail(CheckIfUpdating);
+        }, 50);
+    }
+
+    CheckIfUpdating();
+    
+}());
+</script>

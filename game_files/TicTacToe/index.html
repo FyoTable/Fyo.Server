@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Tic Tac Toe Controller</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+    <!-- Base Fyo css -->
+    <link rel="stylesheet" href="/fyogametable/dist/fyo.css">
+    <!-- Specific to this controller -->
+    <link rel="stylesheet" href="/TicTacToe/base_styles.css">
+
+</head>
+
+<body style="text-align: center;">
+    <div id="readyScreen">
+        <button onmousedown="SendReady()" onmouseup="SendReadyUp()">Ready Up</button>
+        <span id="readyStatus"></span>
+        <h3 id="WinStatus"><h3>
+    </div>
+
+    <div id="gameScreen" style="display:none">
+        <div id="top-bg" class="top-bg top-color"></div>
+        <div id="bottom-bg" class="bottom-bg bottom-color"></div>
+        <div style="display:inline-block; width: 324px;">
+            <table cellpadding="0" cellspacing="0" >
+                <tr>
+                    <td onmousedown="cell(0);" ontouchstart="cell(0)" onmouseup="cellUp(0);" ontouchend="cellUp(0)">
+                        <div id="cell0" class="cell"></div>
+                    </td>
+                    <td onmousedown="cell(1);" ontouchstart="cell(1)" onmouseup="cellUp(1);" ontouchend="cellUp(1)" class="left right">
+                        <div id="cell1" class="cell"></div>
+                    </td>
+                    <td onmousedown="cell(2);" ontouchstart="cell(2)" onmouseup="cellUp(2);" ontouchend="cellUp(2)">
+                        <div id="cell2" class="cell"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td onmousedown="cell(3);" ontouchstart="cell(3)" onmouseup="cellUp(3);" ontouchend="cellUp(3)" class="top bottom">
+                        <div id="cell3" class="cell"></div>
+                    </td>
+                    <td onmousedown="cell(4);" ontouchstart="cell(4)" onmouseup="cellUp(4);" ontouchend="cellUp(4)" class="top left right bottom">
+                        <div id="cell4" class="cell"></div>
+                    </td>
+                    <td onmousedown="cell(5);" ontouchstart="cell(5)" onmouseup="cellUp(5);" ontouchend="cellUp(5)" class="top bottom">
+                        <div id="cell5" class="cell"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td onmousedown="cell(6);" ontouchstart="cell(6)" onmouseup="cellUp(6);" ontouchend="cellUp(6)">
+                        <div id="cell6" class="cell"></div>
+                    </td>
+                    <td onmousedown="cell(7);" ontouchstart="cell(7)" onmouseup="cellUp(7);" ontouchend="cellUp(7)"class="left right">
+                        <div id="cell7" class="cell"></div>
+                    </td>
+                    <td onmousedown="cell(8);" ontouchstart="cell(8)" onmouseup="cellUp(8);" ontouchend="cellUp(8)">
+                        <div id="cell8" class="cell"></div>
+                    </td>
+                </tr>
+            </table>
+
+            <div style="position: absolute; right: 0; top: 0;">
+                <div id="cellplayer" class="cell">
+                </div>
+            </div>
+
+
+            <div style="position: absolute; left: 0; top: 0;">
+                <button onclick="Flip()">Flip the table</button>
+            </div>
+            <div style="position: absolute; left: 0; top: 50px;">
+                <div>
+                    Wins: <span id="wins">0</span>
+                </div>
+                <div>
+                    Losses: <span id="losses">0</span>
+                </div>
+                <div>
+                    Draws: <span id="draws">0</span>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/threejs/build/three.min.js"></script>
+    <script src="/threejs/examples/js/loaders/OBJLoader.js"></script>
+
+    <script src="/fyogametable/dist/fyo.js"></script>
+    <script>
+
+        var mode = false;
+
+        var tableSide = false;
+
+        function Flip() {
+            tableSide = !tableSide;
+            if(tableSide) {
+                document.getElementById('top-bg').setAttribute('class', 'top-bg bottom-color');
+                document.getElementById('bottom-bg').setAttribute('class', 'bottom-bg top-color');
+            } else {
+                document.getElementById('top-bg').setAttribute('class', 'top-bg top-color');
+                document.getElementById('bottom-bg').setAttribute('class', 'bottom-bg bottom-color');
+            }
+        }
+
+        function SetCell(i, s) {
+            if(s == 1) {
+                document.getElementById('cell' + i).setAttribute('style', 'background-image: url(\'/TicTacToe/x_state.gif\')');
+            } else if(s == 2) {
+                document.getElementById('cell' + i).setAttribute('style', 'background-image: url(\'/TicTacToe/o_state.gif\')');
+            } else {
+                document.getElementById('cell' + i).setAttribute('style', '');
+            }
+        }
+
+        var connecter = new FYO.FyoConnection('TicTacToe');
+
+        var tttPlayer = 0;
+        var gameStarted = false;
+
+        var playerId = 0;
+        connecter.on('SGUpdateMsg', function(data) {
+            console.log('SGUpdateMsg', data);
+            if(data.MessageType == "cell") {
+
+                // cell 0...9
+                // state 0,1,2 (0 == clear, 1 == x, 2 == o)
+
+                var ind = data.data.cell;
+                if(tableSide) {
+                    ind = 8 - data.data.cell;
+                }
+
+                SetCell(ind, data.data.state);
+
+            } else if(data.MessageType == "start") {
+                gameStarted = true;
+                tttPlayer = data.data.mark;
+                SetCell('player', data.data.mark);
+
+                document.getElementById('readyScreen').setAttribute('style', 'display:none');
+                document.getElementById('gameScreen').setAttribute('style', '');
+            } else if(data.MessageType == "turn") {
+                navigator.vibrate(250);
+            } else if(data.MessageType == "finish") {
+                if(data.data.winner == 0) {
+                    document.getElementById('WinStatus').innerText = 'Draw!';
+                } else if(data.data.winner == tttPlayer) {
+                    document.getElementById('WinStatus').innerText = 'You Won!';
+                } else {
+                    document.getElementById('WinStatus').innerText = 'You Lost!';
+                }
+
+                for(var i = 0; i < 9; i++) {
+                    SetCell(i, 0);
+                }
+                document.getElementById('readyStatus').innerText = '';
+                document.getElementById('gameScreen').setAttribute('style', 'display:none');
+                document.getElementById('readyScreen').setAttribute('style', '');
+
+            } else if(data.MessageType == "reset") {
+                // for(var i = 0; i < 9; i++) {
+                //     SetCell(i, 0);
+                // }
+                // SetCell('player', 0);
+                // document.getElementById('readyStatus').innerText = '';
+            } else if(data.MessageType == "gamestate") {
+                tttPlayer = data.data.mark;
+                SetCell('player', data.data.mark);
+
+                for(var i = 0; i < 9; i++) {
+                    SetCell(i, data.data.cells[i]);
+                }
+
+                document.getElementById('readyScreen').setAttribute('style', 'display:none');
+                document.getElementById('gameScreen').setAttribute('style', '');
+            }
+        });
+
+        var input = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        function SendInput() {
+            connecter.socket.emit('SGUpdateMsg', {
+                MessageType: "InputData",
+                data: {
+                    "button 0": input[0] > 0,
+                    "button 1": input[1] > 0,
+                    "button 2": input[2] > 0,
+                    "button 3": input[3] > 0,
+                    "button 4": input[4] > 0,
+                    "button 5": input[5] > 0,
+                    "button 6": input[6] > 0,
+                    "button 7": input[7] > 0,
+                    "button 8": input[8] > 0,
+                    "button 9": input[9] > 0,
+                    "axis 0": input[10],
+                    "axis 1": input[11],
+                    "axis 2": input[12],
+                    "axis 3": input[13],
+                    "axis 4": input[14],
+                    "axis 5": input[15],
+                    "axis 6": input[16],
+                    "axis 7": input[17]
+                }
+            });
+        }
+
+        function cell(i) {
+            var ind = i;
+            if(tableSide) {
+                ind = 8 - i;
+            }
+            console.log('SET CELL', ind);
+            for(var i = 0; i < 9; i++) {
+                input[i] = false;
+            }
+
+            input[ind] = true;
+            SendInput();
+        }
+        function cellUp(i) {
+            for(var i = 0; i < 9; i++) {
+                input[i] = false;
+            }
+
+            SendInput();
+        }
+
+        function SendReady() {
+            input[4] = true;
+
+            document.getElementById('readyStatus').innerText = 'Ready';
+            SendInput();
+        }
+
+        function SendReadyUp() {
+            input[4] = false;
+            SendInput();
+        }
+
+
+        function Reposition() {
+
+        }
+        Reposition();
+        window.addEventListener('resize', Reposition, false);
+    </script>
+
+</body>
+</html>

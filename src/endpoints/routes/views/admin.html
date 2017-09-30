@@ -1,0 +1,551 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap-theme.min.css">
+        <style>
+            html, body {
+                padding: 0;
+                margin: 0;
+                width: 100%;
+                height: 100%;
+            }
+            body {
+                background-color: #333;
+                color: #eee;
+            }
+
+            .modal-dialog {
+                background-color: #333;
+                color: #eee;
+            }
+
+            .modal-dialog .modal-content {
+                background-color: #333;
+                color: #eee;
+            }
+
+            .hasFeature {
+                color: #0f0;
+            }
+
+            .noFeature {
+                color: #f00;
+            }
+
+            .toolbar {
+                -webkit-user-select: none;
+                -webkit-app-region: drag;
+            }
+
+            a {
+                color: #fff;
+            }
+            a:hover, a:active, a:visited {
+                color: #88c;
+                text-decoration: none;
+            }
+
+            .device {
+                margin: 0 auto;
+                background-size: 100% 100%;
+                background-size: contain;
+                background-repeat: no-repeat;
+                width: 48px;
+                height: 48px;
+            }
+
+            .device-Laptop {
+                background-image: url('/icon-Laptop.png');
+            }
+
+            .device-Tablet {
+                background-image: url('/icon-Tablet.png');
+            }
+
+            .device-Phone {
+                background-image: url('/icon-Phone.png');
+            }
+
+            .device-Desktop {
+                background-image: url('/icon-Desktop.png');
+            }
+
+            .player-row {
+                font-size: 20px;
+                cursor: pointer;
+            }
+
+            .player-row:hover {
+                background-color: #44a;
+            }
+
+            a.boxed {
+                background-color: #222;
+                padding: 10px;
+                border-radius: 5px;
+                border: 1px solid #444;
+                display: block;
+                margin: 0px 18px 0px 18px;
+            }
+
+            .table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
+                vertical-align: middle;
+            }
+        </style>
+    </head>
+    <body ng-app="admin">
+        <div style="position: fixed; top: 0; left:0; right:0; height: 30px; background-color: #333; z-index: 1000; border-bottom: 1px solid #363636;">
+            <div class="row">
+                <div class="col-xs-11 toolbar" style="height: 30px;">
+                    <img src="/FyoLogoLong.png" style="height: 100%; margin-left: 0px;" />
+                </div>
+                <div class="col-xs-1 text-right">
+                    <a href="javascript:void(0)" onclick="require('electron').ipcRenderer.send('exit');" style="z-index: 10001; width: 30px; text-decoration: none; height: 30px;padding: 5px; padding-right: 10px; cursor: pointer; display:inline-block;">X</a>
+                </div>
+            </div>
+        </div>
+
+        <div style="position: absolute; top: 30px; left:0; right:0; bottom: 0;padding: 10px;padding-top: 0px;" ng-controller="adminCtrl">
+            <div class="row" style="width: 100%; height: 100%;">
+
+                <div class="col-xs-3 text-left">
+
+
+
+                    <div style="padding: 20px;">
+                        <img src="/qr/http/{{address}}:8080" style="width: 100%;background-color: #fff" />
+                    </div>
+                    <div class="text-center">
+                        <a class="boxed" href="javascript:void(0);" ng-click="openWeb()">http://{{address}}:8080</a>
+                        <br />
+                    </div>
+
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <div class="text-left" style="position: fixed;bottom: 0; padding: 15px;">
+                        <img src="/icon-link.png" /> <a href="javascript:void(0);" onclick="require('electron').shell.openExternal('https://github.com/ghoofman/FyoGameTable.Controller.API');">Github Web API</a>
+                        <br />
+                        <img src="/icon-link.png" /> <a href="javascript:void(0);" onclick="require('electron').shell.openExternal('https://github.com/ghoofman/FyoTable');">Github Game Examples</a>
+                        <br />
+                        <img src="/icon-link.png" /> <a href="javascript:void(0);" onclick="require('electron').shell.openExternal('http://docs.fyo.com');">Fyo Game Table Docs</a>
+                    </div>
+                </div>
+
+                <div class="col-xs-9 text-left">
+                    <div class="text-center">
+                        <h1 style="padding: 15px;" ng-if="game">
+                            <span>{{game}} Game</span>
+                        </h1>
+                        <h1 style="padding: 15px;" ng-if="!game">
+                            [ No Connected Game ]
+                        </h1>
+                    </div>
+                    <table class="table">
+                        <tr class="player-row" ng-repeat="player in players" ng-click="SelectDevice(player)" data-toggle="modal" data-target="#myModal">
+                            <td><div class="device device-{{Device(player.Info)}}"></div></td>
+                            <td><span>Player{{player.PlayerId > -1 ? (' ' + player.PlayerId) : ''}}</span></td>
+                            <td><span ng-if="player.Master">Master</span></td>
+                            <td><span>{{player.Controller}}</span></td>
+                            <td>
+                                <span class="ping text-center" ng-if="player.TimingOut">Timing out...</span>
+                                <span class="ping text-center" ng-if="!player.TimingOut">{{player.ping}} ms</span>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <br />
+
+
+                </div>
+            </div>
+
+            <a href="javascript:void(0);" data-toggle="modal" data-target="#utilsModal" style="position: absolute; bottom: 0; right: 0; padding: 15px;">
+                <img src="/icon-settings.png" />
+            </a>
+
+            <div class="modal fade" id="utilsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">Utils</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div><a class="btn btn-primary" href="javascript:void(0);" ng-click="openWebGame()">Open Test Game</a></div>
+							<br />
+                            <div><a class="btn btn-primary" href="javascript:void(0);" ng-click="openControllersFolder()">Open Controllers Folder</a></div>
+							<br />
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">Player{{device.PlayerId > -1 ? (' ' + device.PlayerId) : ''}}{{device.Master ? ', Master' : ''}}</h4>
+                        </div>
+                        <div class="modal-body">
+                            <table class="table">
+                                <tr>
+                                    <td>DeviceId</td>
+                                    <td>{{device.DeviceId}}</td>
+                                </tr>
+                                <tr>
+                                    <td>PlayerId</td>
+                                    <td>{{device.PlayerId}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Master Control</td>
+                                    <td>{{device.Master}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Controller</td>
+                                    <td>
+                                        <select class="form-control" ng-model="device.Controller" ng-options="control as control for control in controllers" ng-change="sendToController(device)"></select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Ping</td>
+                                    <td>{{device.ping}} ms</td>
+                                </tr>
+                            </table>
+
+                            <h2>Info</h2>
+
+                            <table class="table">
+                                <tr>
+                                    <td>Manufacturer</td>
+                                    <td>{{device.Info.manufacturer}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Product</td>
+                                    <td>{{device.Info.product}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Browser</td>
+                                    <td>{{device.Info.browser}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Version</td>
+                                    <td>{{device.Info.version}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Description</td>
+                                    <td>{{device.Info.description}}</td>
+                                </tr>
+                                <tr>
+                                    <td>OS</td>
+                                    <td>{{device.Info.os.family}} {{device.Info.os.version}} x{{device.Info.os.architecture != 64 ? 86 : 64}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Desktop</td>
+                                    <td>{{device.Info.isDesktop}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Resolution</td>
+                                    <td>{{device.Info.resolution.width}} x {{device.Info.resolution.height}} @ {{device.Info.resolution.pixelRatio}} pixel ratio</td>
+                                </tr>
+                                <tr>
+                                    <td>Orientation</td>
+                                    <td>{{device.Info.orientation}}</td>
+                                </tr>
+                            </table>
+
+                            <h4>Battery</h4>
+
+                            <table class="table">
+                                <tr>
+                                    <td>Charging</td>
+                                    <td>{{device.Info.battery.charging}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Charging Time</td>
+                                    <td>{{device.Info.battery.chargingTime}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Discharging Time</td>
+                                    <td>{{device.Info.battery.dischargingTime}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Level</td>
+                                    <td>{{device.Info.battery.level}}</td>
+                                </tr>
+                            </table>
+
+
+                            <h4>Devices</h4>
+
+                            <h6>Audio Input</h6>
+                            <table class="table">
+                                <tr ng-repeat="d in device.Info.devices.audioInput">
+                                    <td>{{$index + 1}}</td>
+                                    <td>{{d.label}}</td>
+                                    <td>{{d.deviceId}}</td>
+                                </tr>
+                            </table>
+
+                            <h6>Video Input</h6>
+                            <table class="table">
+                                <tr ng-repeat="d in device.Info.devices.videoInput">
+                                    <td>{{$index + 1}}</td>
+                                    <td>{{d.label}}</td>
+                                    <td>{{d.deviceId}}</td>
+                                </tr>
+                            </table>
+
+                            <h6>Audio Output</h6>
+                            <table class="table">
+                                <tr ng-repeat="d in device.Info.devices.audioOutput">
+                                    <td>{{$index + 1}}</td>
+                                    <td>{{d.label}}</td>
+                                    <td>{{d.deviceId}}</td>
+                                </tr>
+                            </table>
+
+
+                            <h4>Capabilities</h4>
+                            <table class="table">
+                                <tr ng-repeat="c in deviceKeys" ng-class="{ hasFeature: device.Info.capabilities[c], noFeature: !device.Info.capabilities[c]}">
+                                    <td>{{c}}</td>
+                                    <td>{{device.Info.capabilities[c]}}</td>
+                                </tr>
+                            </table>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+                        <script>if (typeof module === 'object') { window.module = module; module = undefined; }</script>
+
+                        <script src="/jquery/dist/jquery.js"></script>
+
+                        <script>if (window.module) module = window.module;</script>
+                        <script src="/bootstrap/dist/js/bootstrap.js"></script>
+
+                        <script src="/socket.io/socket.io.js"></script>
+                        <script src="/angular/angular.min.js"></script>
+                        <script>
+                            var adminApp = angular.module('admin', []);
+                            adminApp.controller('adminCtrl', function ($scope) {
+                                $scope.game = '';
+                                $scope.players = [];
+                                $scope.messages = [];
+                                $scope.device = null;
+                                $scope.deviceKeys = [];
+
+                                $scope.controllers = [];
+
+
+
+                                $scope.SelectDevice = function (dev) {
+                                    $scope.device = dev;
+                                    $scope.deviceKeys = Object.keys(dev.Info.capabilities);
+                                }
+
+                                function openInNewTab(url) {
+                                    var win = window.open(url, '_blank');
+                                    win.focus();
+                                }
+
+                                function openExternal(url) {
+                                    var r = require || null;
+                                    if (r) {
+                                        r('electron').shell.openExternal(url);
+                                    } else {
+                                        var win = window.open(url);
+                                        win.focus();
+                                    }
+                                }
+
+                                $scope.openWeb = function () {
+                                    openInNewTab('http://' + $scope.address + ':8080');
+                                }
+                                $scope.openWebGame = function () {
+                                    openExternal('http://' + $scope.address + ':8080/game');
+                                }
+
+                                $scope.Device = function (info) {
+									if(!info) {
+										return '';
+									}
+									
+                                    if (info.manufacturer == 'Apple' && info.product == 'iPad') {
+                                        return 'Tablet';
+                                    }
+                                    if (info.manufacturer == 'Apple') {
+                                        return 'Phone';
+                                    }
+                                    if (info.os.family == 'Android') {
+                                        return 'Phone';
+                                    }
+                                    if (info.isDesktop) {
+                                        return 'Desktop';
+                                    }
+                                    return 'Laptop';
+                                };
+
+                                var socket = io();
+
+                                socket.on('connect', function () {
+                                    $scope.messages.unshift({
+                                        message: 'Connected'
+                                    });
+
+
+                                    // get code from main process
+                                    // Reads it from .env
+                                    const { ipcRenderer } = require('electron');                    
+                                    ipcRenderer.send('admincode');
+                                    ipcRenderer.on('admincode-reply', (event, arg) => {
+                                        console.log(arg);
+                                        socket.emit('AdminHandshakeMsg', {
+                                            code: arg
+                                        });
+
+                                        socket.on('controllers', function(data) {
+                                            $scope.controllers = data;
+                                            $scope.$digest();
+                                        });
+                                        socket.emit('controllers');
+
+                                        socket.on('ipaddresses', function(data) {
+
+                                            console.log(data);
+
+                                            if (data.length > 0) {
+                                                $scope.address = data[0];
+                                            } else {
+                                                $scope.address = '127.0.0.1';
+                                            }
+
+                                            $scope.$digest();
+                                        });
+                                        socket.emit('ipaddresses');
+                                    });
+                                });
+
+                                socket.on('status', function (data) {
+                                    console.log(data);
+                                    $scope.game = data.game;
+                                    $scope.players = data.manager;
+
+                                    $scope.messages.unshift({
+                                        message: 'status',
+                                        data: data
+                                    });
+                                    $scope.$digest();
+                                });
+
+                                socket.on('SGHandshakeIdentMsg', function (data) {
+                                    console.log('controller joined', data);
+                                    $scope.messages.unshift({
+                                        message: 'SGHandshakeIdentMsg'
+                                    });
+
+                                    var found = false;
+                                    for (var i = 0; i < $scope.players.length; i++) {
+                                        if ($scope.players[i].DeviceId == data.DeviceId) {
+                                            found = true;
+                                            $scope.players[i] = data;
+                                            break;
+                                        }
+                                    }
+                                    if (!found) {
+                                        $scope.players.push(data);
+                                    }
+                                    $scope.$digest();
+                                });
+
+                                socket.on('SGUpdateMsg', function () {
+                                    $scope.messages.unshift({
+                                        message: 'SGUpdateMsg',
+                                        data: data
+                                    });
+                                    $scope.$digest();
+                                });
+
+                                socket.on('AppHandshakeMsg', function (data) {
+                                    console.log(data);
+
+                                    $scope.messages.unshift({
+                                        message: 'AppHandshakeMsg',
+                                        data: data
+                                    });
+                                    $scope.game = data.AppIDString;
+                                    $scope.$digest();
+                                });
+
+                                socket.on('GameEnd', function () {
+                                    $scope.game = '';
+                                    $scope.$digest();
+                                });
+
+                                socket.on('AppEndMsg', function () {
+                                    $scope.messages.unshift({
+                                        message: 'AppEndMsg',
+                                        data: data
+                                    });
+                                    $scope.game = '';
+                                    $scope.$digest();
+                                });
+                                socket.on('GameDisconnect', function () {
+                                    $scope.messages.unshift({
+                                        message: 'GameDisconnect'
+                                    });
+                                    $scope.game = '';
+                                    $scope.$digest();
+                                });
+
+                                socket.on('app-latency', function (data) {
+                                    for (var i = 0; i < $scope.players.length; i++) {
+                                        if ($scope.players[i].DeviceId == data.DeviceId) {
+                                            $scope.players[i].ping = Math.floor(data.average);
+                                            break;
+                                        }
+                                    }
+                                    $scope.$digest();
+                                });
+
+                                socket.on('SGDisconnectMsg', function (data) {
+                                    for (var i = 0; i < $scope.players.length; i++) {
+                                        if ($scope.players[i].DeviceId == data.DeviceId) {
+                                            $scope.players.splice(i, 1);
+                                            break;
+                                        }
+                                    }
+                                    $scope.$digest();
+                                });
+
+								socket.on('SGRedirectMsg', function(data) {
+										console.log('SGRedirectMsg', data);
+								});
+
+
+                                $scope.sendToController = function (device) {
+                                    socket.emit('SGRedirectMsg', device);
+                                };
+
+                                $scope.openControllersFolder = function () {
+                                    require('electron').ipcRenderer.send('folder', 'game_files');
+								};
+
+                            });
+                        </script>
+</body>
+</html>

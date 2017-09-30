@@ -1,0 +1,51 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
+    </head>
+    <body ng-app="admin">
+        <div ng-controller="adminCtrl">
+            <h1>Admin</h1>
+            <h3>Game: {{game}}</h3>
+            <div ng-repeat="player in players">
+                <h5>Player {{player.PlayerId}} - {{player.DeviceId}} - {{player.Controller}} - {{player.Master}}</h5>
+            </div>
+        </div>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/angular/angular.min.js"></script>
+        <script>
+            var adminApp = angular.module('admin', []);
+            adminApp.controller('adminCtrl', function ($scope) {
+                $scope.game = '';
+                $scope.players = [];
+
+                var socket = io();
+
+                socket.on('connect', function () {
+                    // get code from main process
+                    // Reads it from .env
+                    const { ipcRenderer } = require('electron');                    
+                    ipcRenderer.send('admincode');
+                    ipcRenderer.on('admincode-reply', (event, arg) => {
+                        console.log(arg);
+                        socket.emit('AdminHandshakeMsg', {
+                            code: arg
+                        });
+                    });
+                });
+
+                socket.on('status', function (data) {
+                    console.log(data);
+                    $scope.game = data.game;
+                    $scope.players = data.manager;
+                    $scope.$digest();
+                });
+
+                socket.on('SGHandshakeIdentMsg', function (data) {
+                    console.log('controller joined', data);
+                    $scope.players.push(data);
+                    $scope.$digest();
+                });
+            })
+        </script>
+    </body>
+</html>

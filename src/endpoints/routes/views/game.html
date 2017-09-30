@@ -1,0 +1,115 @@
+<html>
+    <head>
+        <style>
+            body, * {
+                background-color: #d3d3d4;
+                color: #333;
+            }
+        </style>
+        <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap-theme.min.css">
+    </head>
+    <body>
+        <h1 id="title">Setting Up</h1>
+        <div id="messages"></div>
+        <img id="imp" src="/test_game/imp.png" />
+
+
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            var alphabet = 'abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            function GenUniqueID() {
+                var code = '';
+                for(var i = 0; i < 24; i++) {
+                    code += alphabet[Math.floor(Math.random() * (alphabet.length - 1))];
+                }
+                return code;
+            }
+            var socket = io();
+            socket.on('connect', function () {
+                document.getElementById('title').innerText = 'The Game';
+                 socket.emit('AppHandshakeMsg', {
+                     AppIDString: 'Test',
+                     Controller: 'Input Test'
+                 });
+            });
+
+            socket.on('disconnect', function () {
+                document.getElementById('title').innerText = 'Not Connected';
+            });
+
+             socket.on('AppHandshakeMsg', function() {
+                 // Server is ready for stuff to happen
+             });
+
+             socket.on('SGHandshakeMsg', function(gamepad) {
+                 console.log('new game pad', gamepad);
+             });
+             socket.on('SGDisconnectMsg', function(gamepad) {
+                 console.log('game pad dropped', gamepad);
+             });
+             socket.on('AppEndMsg', function() {
+                console.log('why no play with me? :(')
+             });
+
+             var impPos = {
+                 x: 0,
+                 y: 0
+             };
+             var lastController = {
+                 x: 0,
+                 y: 0
+             };
+             var imp = document.getElementById('imp');
+             socket.on('SGUpdateMsg', function (packet) {
+                 console.log(packet);
+                 switch (packet.MessageType) {
+                     case 'Input': {
+                         var input = {
+                             x: packet.data["axis 0"],
+                             y: -packet.data["axis 1"],
+                             a: packet.data['button 0'],
+                             b: packet.data['button 1'],
+                         };
+                         if (input.a && !lastController.a) {
+                             var msg = document.createElement('div');
+                             msg.innerText = 'Player ' + packet.PlayerId + ' Jumped';
+                             document.getElementById('messages').appendChild(msg);
+                         }
+                         if (input.b && !lastController.b) {
+                             var msg = document.createElement('div');
+                             msg.innerText = 'Player ' + packet.PlayerId + ' Ducked';
+                             document.getElementById('messages').appendChild(msg);
+                         }
+                         lastController = input;
+                         break;
+                     }
+                     case 'LeftThumb': {
+                         lastController = packet.data;
+                         break;
+                     }
+                 }
+             });
+
+
+             window.requestAnimFrame = (function () {
+                 return window.requestAnimationFrame ||
+                     window.webkitRequestAnimationFrame ||
+                     window.mozRequestAnimationFrame ||
+                     function (callback) {
+                         window.setTimeout(callback, 1000 / 60);
+                     };
+             })();
+
+             function render() {
+                impPos.x += lastController.x;
+                 impPos.y -= lastController.y;
+                 imp.setAttribute('style', 'position:absolute;top: ' + impPos.y + 'px;left:' + impPos.x + 'px;');
+
+                 requestAnimFrame(render);
+             }
+
+             render();
+
+          </script>
+    </body>
+</html>
