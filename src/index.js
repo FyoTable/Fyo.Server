@@ -161,7 +161,7 @@ client.on('message', function (topic, message) {
             }
             case 'live': {
                 console.log('publishing to ', process.env.FYO_ID);
-                client.publish(process.env.FYO_ID, 'alive');
+                client.publish('device-state', process.env.FYO_ID);
             }
         }
     } catch(err) {
