@@ -13,7 +13,11 @@ function Updater() {
 
 Updater.prototype = {
     UpdateNodeServer: function() {
-        return CMD( 'git', [ 'pull' ] );
+        return new Promise( (resolve, reject) => {
+            CMD( 'git', [ 'pull' ] ).then( () => {
+                CMD('npm', ['install']).then(resolve).catch(reject);
+            }).catch(reject);
+        });
     },
 
     UpdateSoftware: function() {

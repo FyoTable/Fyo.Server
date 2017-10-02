@@ -6,6 +6,7 @@ var express = require('express'),
     qr = require('qr-image'),
     path = require('path'),
     https = require('https');
+const cors = require('cors');
 
 const { spawn } = require('child_process');
 
@@ -27,6 +28,9 @@ app.all('/', function(req, res, next) {
     res.header("Expires", 0);
     next();
 });
+app.use(cors());
+app.enable('trust proxy');
+app.options('*', cors());
 
 // Static file serving
 app.use(express.static(__dirname + '/res'));
