@@ -6,6 +6,8 @@ const helpers = require('./helpers.js');
 const config = require('./config.js');
 const SU = require('./su.js');
 const CMD = require('./cmd.js');
+var Client = require('node-rest-client').Client;
+var restClient = new Client();
 
 function Updater() {
 
@@ -26,6 +28,7 @@ Updater.prototype = {
         return new Promise(function(resolve, reject) {
             self.getPortalConfig().then( ( portalConfig ) => {
                 console.log('getPortalConfig', portalConfig);
+                config.Update(portalConfig);
                 config.GetSoftwareToUpdate( portalConfig ).then( ( updates ) => {
 
                     self.downloadAPKs( updates ).then( () => {
@@ -132,17 +135,13 @@ Updater.prototype = {
 
     getPortalConfig: function( ) {
         return new Promise( (resolve, reject ) => {
-            resolve( {
-                id: config.Get('id'),
-                software: [
-                    {
-                        id: 'FyoMarquee',
-                        version: '0.0.1',
-                        url: 'FyoMarquee.0.0.1.apk',
-                        pkg: 'io.DCCKLLC.FyoMarquee'
-                    }
-                ]
-            } );
+            restClient.get('http://portal.fyo.io/api/v1/' + config.Get('id'), function( data, response) {
+                if(data) {
+                    resolve( data );
+                } else {
+                    reject( response );
+                }
+            });
         });
     },
 

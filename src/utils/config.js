@@ -73,6 +73,14 @@ Config.prototype = {
     
             resolve( result );
         } );
+    },
+
+    Update: function( portalConfig ) {
+        this.data.config = this.data.config || {};
+        portalConfig = portalConfig || {};
+        portalConfig.config = portalConfig.config || {};
+
+        this.data.config = portalConfig.config;
     }
 };
 
