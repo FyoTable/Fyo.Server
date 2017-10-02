@@ -4,8 +4,6 @@
   "private": true,
   "scripts": {
     "start": "node src/update.js",
-    "watch": "gulp watch",
-    "install": "gulp dist",
     "electron": "electron ."
   },
   "main": "src/main.js",
