@@ -75,7 +75,7 @@ Updater.prototype = {
                         console.log(x.pkg, 'package is installed');
 
                         // uninstall it
-                        return self.uninstallAPK(x.pkg).then(() => {
+                        return self.uninstallAPK(x.id).then(() => {
                             console.log('Uninstalled package', x.pkg);
                             // install it
                             return self.installAPK(x.url)
