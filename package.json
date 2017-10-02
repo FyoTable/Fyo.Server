@@ -4,11 +4,13 @@
   "private": true,
   "scripts": {
     "start": "node src/update.js",
-    "electron": "electron ."
+    "electron": "electron .",
+    "postinstall": "./node_modules/bower/bin/bower install"
   },
   "main": "src/main.js",
   "dependencies": {
     "adm-zip": "^0.4.7",
+    "bower": "^1.8.2",
     "colors": "^1.1.2",
     "cors": "^2.8.4",
     "dotenv": "^4.0.0",
