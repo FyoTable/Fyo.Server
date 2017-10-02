@@ -3,6 +3,7 @@ var express = require('express'),
     helpers = require('./utils/helpers.js'),
     CMD = require('./utils/cmd.js'),
     SU = require('./utils/su.js'),
+    config = require('./utils/config.js'),
     qr = require('qr-image'),
     path = require('path'),
     https = require('https');
@@ -91,6 +92,10 @@ function Start(app) {
 
 app.get('/ping', function(req, res) {
     res.send('pong');
+});
+
+app.get('/config', function(req, res) {
+    res.send(config.data);
 });
 
 app.get('/start/:app', function(req, res) {
