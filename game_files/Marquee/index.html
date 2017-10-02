@@ -43,7 +43,8 @@
             });
 
             connecter.on('Games', function (data) {
-                var gamesEl = document.getElementById('games');
+				var gamesEl = document.getElementById('games');
+				gamesEl.innerHTML = '';
 				data.map(function(g) {
                     // add game
                     var div = document.createElement('div');
