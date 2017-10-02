@@ -84,6 +84,11 @@ function Start(app) {
     return CMD('am', ['start', '--user', '0', '-a', 'android.intent.action.MAIN', app + '/.MainActivity']);
 }
 
+
+app.get('/ping', function(req, res) {
+    res.send('pong');
+});
+
 app.get('/start/:app', function(req, res) {
     Start(req.params.app).then( () => {
         res.send('success');
