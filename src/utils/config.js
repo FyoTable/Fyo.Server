@@ -37,23 +37,29 @@ Config.prototype = {
     },
 
     UpdateSoftware: function( pkg ) {
-        this.data.software = this.data.software || [];
-        let match = this.data.software.findIndex( ( cs ) => {
+        this.data.config = this.data.config || {};
+        this.data.config.software = this.data.config.software || [];
+        let match = this.data.config.software.findIndex( ( cs ) => {
             if( cs.id === s.id ) {
                 return cs;
             }
         } );
         if(match >= 0) {
-            this.data.software[match] = pkg;
+            this.data.config.software[match] = pkg;
         } else {
-            this.data.software.push(pkg);
+            this.data.config.software.push(pkg);
         }
     },
 
-    GetSoftwareToUpdate: function( config ) {
+    GetSoftwareToUpdate: function( portalConfig ) {
         let self = this;
-        let currentSoftware = this.Get('software') || [];
-        let portalSoftware = config.software;
+        this.data.config = this.data.config || {};
+        this.data.config.software = this.data.config.software || [];
+        let currentSoftware = this.data.config.software;
+        portalConfig = portalConfig || {};
+        portalConfig.config = portalConfig.config || {};
+        portalConfig.config.software = portalConfig.config.software || [];
+        let portalSoftware = portalConfig.config.software;
 
         return new Promise( ( resolve, reject ) => {
     
@@ -79,8 +85,8 @@ Config.prototype = {
         this.data.config = this.data.config || {};
         portalConfig = portalConfig || {};
         portalConfig.config = portalConfig.config || {};
-
-        this.data.config = portalConfig.config;
+        this.data.config.wireless = portalConfig.config.wireless;
+        this.data.name = portalConfig.name;
     }
 };
 
