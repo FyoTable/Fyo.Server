@@ -19,7 +19,7 @@
                         <img src="/HyperTanks/Logo.png" />
                     </div>
                     <div id="DPad">
-                        <img src="/HyperTanks/DPad.png" noselect />
+                        <img id="dpadImg" src="/HyperTanks/DPad.png" noselect />
                     </div>
                 </div>
                 <div class="col-xs-6" style="height: 100%">
@@ -38,14 +38,14 @@
                                     <div class="side-left">
                                     </div>
                                     <div class="side-right noselect" id="ButtonB">
-                                        <img src="/HyperTanks/Bomb.png" />
+                                        <img id="bombImg" class="noselect" src="/HyperTanks/Bomb.png" />
                                     </div>
                                 </div>
                                 <div id="bottom-button">
                                     <div class="side-left">
                                     </div>
                                     <div class="side-right noselect" id="ButtonA">
-                                        <img src="/HyperTanks/Missile.png" />
+                                        <img id="missileImg" class="noselect" src="/HyperTanks/Missile.png" />
                                     </div>
                                 </div>
                             </div>
@@ -84,6 +84,22 @@
 
         <!-- Controller specific setup -->
         <script>
+
+            function Prevent(event) {
+                event.preventDefault();
+                event.stopPropagation && e.stopPropagation();
+                event.cancelBubble = true;
+                event.returnValue = false;
+            }
+            document.getElementById('missileImg').addEventListener('touchend', Prevent);
+            document.getElementById('missileImg').addEventListener('touchstart', Prevent);
+            document.getElementById('missileImg').addEventListener('touchmove', Prevent);
+            document.getElementById('bombImg').addEventListener('touchend', Prevent);
+            document.getElementById('bombImg').addEventListener('touchstart', Prevent);
+            document.getElementById('bombImg').addEventListener('touchmove', Prevent);
+            document.getElementById('dpadImg').addEventListener('touchend', Prevent);
+            document.getElementById('dpadImg').addEventListener('touchstart', Prevent);
+            document.getElementById('dpadImg').addEventListener('touchmove', Prevent);
 
             var playerId = 0;
 
