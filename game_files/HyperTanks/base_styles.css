@@ -172,8 +172,8 @@ h1.retroshadow {
 
 #system-buttons {
     position: absolute;
-    top: 2%;
-    left: 15%;
+    top: 5%;
+    left: 10%;
 }
 #ButtonStart {
     position: relative;
@@ -222,9 +222,9 @@ h1.retroshadow {
 
 #HyperLogo {
     position: absolute;
-    top: 10%;
+    top: 5%;
     left: 10%;
-    width: 100px;
+    width: 75px;
 }
 #HyperLogo img {
     width: 100%;

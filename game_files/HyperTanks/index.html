@@ -14,7 +14,7 @@
     <body>
         <div id="mainContainer">
             <div class="row" style="height: 100%">
-                <div class="col-xs-6" style="height: 100%">
+                <div class="col-xs-5" style="height: 100%">
                     <div id="HyperLogo">
                         <img src="/HyperTanks/Logo.png" />
                     </div>
@@ -22,7 +22,7 @@
                         <img src="/HyperTanks/DPad.png" />
                     </div>
                 </div>
-                <div class="col-xs-6" style="height: 100%">
+                <div class="col-xs-7" style="height: 100%">
                     <div id="buttons-right">
                         <div id="system-buttons">
                             <div id="ButtonStart">
@@ -125,20 +125,20 @@
             var buttonA = new FYO.Button(connecter, {
                 id: 'ButtonA',
                 ondown: function () {
-                    connecter.SetButtonOn(FYO.BUTTON[0]);
+                    connecter.SetButtonOn(FYO.BUTTON[1]);
                 },
                 onup: function () {
-                    connecter.SetButtonOff(FYO.BUTTON[0]);
+                    connecter.SetButtonOff(FYO.BUTTON[1]);
                 }
             });
 
             var buttonB = new FYO.Button(connecter, {
                 id: 'ButtonB',
                 ondown: function () {
-                    connecter.SetButtonOn(FYO.BUTTON[1]);
+                    connecter.SetButtonOn(FYO.BUTTON[0]);
                 },
                 onup: function () {
-                    connecter.SetButtonOff(FYO.BUTTON[1]);
+                    connecter.SetButtonOff(FYO.BUTTON[0]);
                 }
             });
 
