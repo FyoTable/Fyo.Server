@@ -253,3 +253,7 @@ h1.retroshadow {
     float: left;
     width: 50%;
 }
+
+.noselect {
+    pointer-events: none;
+}
