@@ -14,7 +14,7 @@
     <body>
         <div id="mainContainer">
             <div class="row" style="height: 100%">
-                <div class="col-xs-5" style="height: 100%">
+                <div class="col-xs-6" style="height: 100%">
                     <div id="HyperLogo">
                         <img src="/HyperTanks/Logo.png" />
                     </div>
@@ -22,13 +22,13 @@
                         <img src="/HyperTanks/DPad.png" />
                     </div>
                 </div>
-                <div class="col-xs-7" style="height: 100%">
+                <div class="col-xs-6" style="height: 100%">
                     <div id="buttons-right">
                         <div id="system-buttons">
                             <div id="ButtonStart">
                                 START
                             </div>
-                            <div id="info-button">
+                            <div id="ButtonInfo">
                                 <img src="/HyperTanks/Target.png" />
                             </div>
                         </div>
@@ -53,6 +53,10 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="landscape" id="landscape">
+            <img src="/logo.svg" style="width: 100px; margin: 20px;" />
+            <h1>To start, rotate your phone to landscape.</h1>
         </div>
 
 
@@ -150,7 +154,17 @@
                 onup: function () {
                     connecter.SetButtonOff(FYO.BUTTON[2]);
                 }
-            });            
+            });     
+
+            var buttonInfo = new FYO.Button(connecter, {
+                id: 'ButtonInfo',
+                ondown: function () {
+                    connecter.SetAxis(FYO.AXIS[2], 0, FYO.AXIS[3], -1);
+                },
+                onup: function () {
+                    connecter.SetAxis(FYO.AXIS[2], 0, FYO.AXIS[3], 0);
+                }
+            });
             
             var thumbstickLeftRenderer = new FYO.ThumbStick(connecter, {
                 id: 'DPad',
@@ -159,6 +173,32 @@
                 }
             });
 
+            function startInternal() {
+                document.getElementById('landscape').setAttribute('style', 'display: none');
+            }
+
+            var start = function() {
+                if(screen.orientation.type.startsWith('landscape')) {
+                    startInternal();
+                }
+                
+                screen.orientation.lock('landscape-primary').then(
+                    startInternal,
+                    function() {
+
+                        var orientationChangeHandler = function() {
+                        if (!screen.orientation.type.startsWith('landscape')) {
+                            document.getElementById('landscape').setAttribute('style', '');
+                            return;
+                        }
+                        screen.orientation.removeEventListener('change', orientationChangeHandler);
+                            startInternal();
+                        }
+
+                        screen.orientation.addEventListener('change', orientationChangeHandler);
+                    });
+            }
+            window.onload = start;
         </script>
 
     </body>
