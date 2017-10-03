@@ -40,7 +40,7 @@ Config.prototype = {
         this.data.config = this.data.config || {};
         this.data.config.software = this.data.config.software || [];
         let match = this.data.config.software.findIndex( ( cs ) => {
-            if( cs.id === s.id ) {
+            if( cs.id === pkg.id ) {
                 return cs;
             }
         } );
