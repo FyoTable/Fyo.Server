@@ -44,7 +44,8 @@ SocketGamePad.prototype = {
 
 			console.log('setting up reconnect timer');
 			self.reconnectTimer = setTimeout(function () {
-				// Full disconnect
+                // Full disconnect
+                console.log('A full disconnect');
 				self.events.trigger('SGDisconnectMsg', {
 					SGID: self.SGID,
 					DeviceId: self.socket.DeviceId
@@ -109,6 +110,7 @@ SocketGamePad.prototype = {
 
     Reconnect: function (socket) {
         if (this.reconnectTimer) {
+            console.log('RECONNECTED');
             clearTimeout(this.reconnectTimer);
             this.reconnectTimer = null;
         }

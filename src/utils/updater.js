@@ -135,8 +135,8 @@ Updater.prototype = {
 
     getPortalConfig: function( ) {
         return new Promise( (resolve, reject ) => {
-            restClient.get('http://portal.fyo.io/api/v1/devices/' + config.Get('id'), function( data, response) {
-            console.log(data.toString());    
+            restClient.get('http://fyo.io/api/device/config/' + config.Get('id'), function( data, response) {
+            console.log(data.toString());
             if(data) {
                     resolve( data );
                 } else {

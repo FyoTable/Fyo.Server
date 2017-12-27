@@ -166,6 +166,7 @@ FyoManager.prototype = {
         }
 
         if (this.socketGamePads.length == 0) {
+            console.log('NO gamepads connected...');
             this.endGameTimer = setTimeout(function () {
                 console.log(colors.yellow('[GAME END]'), 'no clients connected');
                 if (self.activeApp != null) {

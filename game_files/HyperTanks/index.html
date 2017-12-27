@@ -198,21 +198,18 @@
                     startInternal();
                 }
                 
-                screen.orientation.lock('landscape-primary').then(
-                    startInternal,
-                    function() {
+                screen.orientation.lock('landscape-primary').then( startInternal, function() {
+                    var orientationChangeHandler = function() {
+                    if (!screen.orientation.type.startsWith('landscape')) {
+                        document.getElementById('landscape').setAttribute('style', '');
+                        return;
+                    }
+                    screen.orientation.removeEventListener('change', orientationChangeHandler);
+                        startInternal();
+                    }
 
-                        var orientationChangeHandler = function() {
-                        if (!screen.orientation.type.startsWith('landscape')) {
-                            document.getElementById('landscape').setAttribute('style', '');
-                            return;
-                        }
-                        screen.orientation.removeEventListener('change', orientationChangeHandler);
-                            startInternal();
-                        }
-
-                        screen.orientation.addEventListener('change', orientationChangeHandler);
-                    });
+                    screen.orientation.addEventListener('change', orientationChangeHandler);
+                });
             }
             window.onload = start;
         </script>
