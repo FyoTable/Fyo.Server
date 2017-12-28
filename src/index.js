@@ -151,7 +151,9 @@ var client  = mqtt.connect(process.env.MQQT_URL, {
 });
 
 client.on('connect', function () {
-    client.subscribe(process.env.FYO_ID);
+    var FyoTableId = config.Get('id');
+    console.log('MQQT subscribed to:', FyoTableId);
+    client.subscribe(FyoTableId);
 });
 
 client.on('message', function (topic, message) {
@@ -174,8 +176,9 @@ client.on('message', function (topic, message) {
                 su.exit();
             }
             case 'live': {
-                console.log('publishing to ', process.env.FYO_ID);
-                client.publish('device-state', process.env.FYO_ID);
+                var FyoTableId = config.Get('id');
+                console.log('publishing to ', FyoTableId);
+                client.publish('device-state', FyoTableId);
             }
         }
     } catch(err) {
