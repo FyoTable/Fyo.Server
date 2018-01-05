@@ -19,16 +19,19 @@ WebSocketManager.prototype = {
 
         socket.on('screenshot', function() {
             var s = new su();
-            var path =  __dirname + '/screen.png';
+            s.start();
 
-            s.run('screencap -p > ' + path);
+            var path =  __dirname + '/screen.mp4';
+
+            s.run('screenrecord ' + path + ' --time-limit 15');
 
             // Read /sdcard/screen.png
 
             setTimeout(function() {
                 if(fs.existsSync(path)) {
                     let contents = fs.readFileSync(path);
-                    socket.emit('screenshot', contents);
+                    // post file
+                    //socket.emit('screenshot', contents);
                 } else {
                     console.log('screenshot not found at ', path);
                 }
