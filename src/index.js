@@ -6,7 +6,8 @@ var express = require('express'),
     config = require('./utils/config.js'),
     qr = require('qr-image'),
     path = require('path'),
-    https = require('https');
+    https = require('https'),
+    websocketManager = require('./utils/websocketManager');
 const cors = require('cors');
 
 const { spawn } = require('child_process');
@@ -180,6 +181,9 @@ client.on('message', function (topic, message) {
                 console.log('publishing to ', FyoTableId);
                 client.publish('device-state', FyoTableId);
             }
+            case 'websockets': {
+                websocketManager.connect();
+            }
         }
     } catch(err) {
         console.log(err);
@@ -187,3 +191,5 @@ client.on('message', function (topic, message) {
 
 });
 
+
+websocketManager.connect();

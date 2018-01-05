@@ -119,11 +119,13 @@ Application.prototype = {
                 // delete the zip file
                 fs.unlink(fullpath);
 
-                self.Controller = data.Controller || game.AppIDString;
                 // Tell all gamepads to go to the games controller
                 //self.socketGamePadManager.Redirect(self.Controller);
             });
         }
+
+        self.Controller = data.Controller || game.AppIDString;
+        console.log('Application Controller: ', self.Controller);
     },
 
     End: function () {
@@ -146,6 +148,9 @@ Application.prototype = {
             controller: socketGamePad.controller
 		});
         socketGamePad.SGHandshakeMsg(this.socket);
+        if(socketGamePad.controller != self.Controller) {
+            socketGamePad.Redirect(self.Controller);
+        }
     },
 
     SGUpdateMsg: function (socketGamePad, data) {
