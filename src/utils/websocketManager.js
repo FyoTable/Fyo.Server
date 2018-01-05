@@ -4,6 +4,8 @@ var su = require('./su.js');
 
 var fs = require('fs');
 
+var config = require('./config.js');
+
 function WebSocketManager() {
 
 }
@@ -30,8 +32,12 @@ WebSocketManager.prototype = {
             setTimeout(function() {
                 if(fs.existsSync(path)) {
                     let contents = fs.readFileSync(path);
+                    var FyoTableId = config.Get('id');
                     // post image
-                    socket.emit('screenshot', contents);
+                    socket.emit('screenshot', {
+                        device: FyoTableId,
+                        content: contents.toString('base64')
+                    });
                 } else {
                     console.log('screenshot not found at ', path);
                 }
