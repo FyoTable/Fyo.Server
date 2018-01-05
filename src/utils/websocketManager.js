@@ -21,17 +21,17 @@ WebSocketManager.prototype = {
             var s = new su();
             s.start();
 
-            var path =  __dirname + '/screen.mp4';
+            var path =  '/sdcard/screen.png';
 
-            s.run('screenrecord ' + path + ' --time-limit 15');
+            s.run('screencap ' + path);
 
             // Read /sdcard/screen.png
 
             setTimeout(function() {
                 if(fs.existsSync(path)) {
                     let contents = fs.readFileSync(path);
-                    // post file
-                    //socket.emit('screenshot', contents);
+                    // post image
+                    socket.emit('screenshot', contents);
                 } else {
                     console.log('screenshot not found at ', path);
                 }
