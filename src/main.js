@@ -21,7 +21,7 @@ function createWindow () {
 
   // and load the index.html of the app.
   mainWindow.loadURL(url.format({
-    pathname: '//localhost:8080/electron',
+    pathname: '//localhost:' + process.env.PORT + '/electron',
     protocol: 'http:',
     slashes: true
   }))
