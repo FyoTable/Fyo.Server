@@ -194,22 +194,39 @@
             }
 
             var start = function() {
-                if(screen.orientation.type.startsWith('landscape')) {
-                    startInternal();
-                }
-                
-                screen.orientation.lock('landscape-primary').then( startInternal, function() {
-                    var orientationChangeHandler = function() {
-                    if (!screen.orientation.type.startsWith('landscape')) {
-                        document.getElementById('landscape').setAttribute('style', '');
-                        return;
-                    }
-                    screen.orientation.removeEventListener('change', orientationChangeHandler);
+
+                if(!screen.orientation) {
+                    if(window.orientation == -90 || window.orientation == 90) {
                         startInternal();
                     }
 
-                    screen.orientation.addEventListener('change', orientationChangeHandler);
-                });
+                    window.addEventListener('orientationchange', function(){
+                        console.log('Orientation change!');
+                        if(window.orientation == -90 || window.orientation == 90) {
+                            startInternal();
+                        } else {
+                            document.getElementById('landscape').setAttribute('style', '');
+                        }
+                    });
+                } else {
+                    
+                    if(screen.orientation.type.startsWith('landscape')) {
+                        startInternal();
+                    }
+                    
+                    screen.orientation.lock('landscape-primary').then( startInternal, function() {
+                        var orientationChangeHandler = function() {
+                        if (!screen.orientation.type.startsWith('landscape')) {
+                            document.getElementById('landscape').setAttribute('style', '');
+                            return;
+                        }
+                        screen.orientation.removeEventListener('change', orientationChangeHandler);
+                            startInternal();
+                        }
+
+                        screen.orientation.addEventListener('change', orientationChangeHandler);
+                    });
+                }
             }
             window.onload = start;
         </script>

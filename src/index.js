@@ -193,3 +193,15 @@ client.on('message', function (topic, message) {
 
 
 websocketManager.connect();
+
+
+
+// iptables -t nat -A PREROUTING -p tcp -m tcp --dport 80 -j REDIRECT --to-ports 8080
+try{
+    var su = new SU();
+    su.start();
+    su.run('iptables -t nat -A PREROUTING -p tcp -m tcp --dport 80 -j REDIRECT --to-ports ' + PORT);
+    su.exit();
+}catch(err) {
+    console.log('Could not open port 80', err);
+}
