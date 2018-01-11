@@ -16,7 +16,8 @@ function Updater() {
 Updater.prototype = {
     UpdateNodeServer: function() {
         return new Promise( (resolve, reject) => {
-            CMD( 'git', [ 'pull' ] ).then( () => {
+            CMD( 'git', [ 'pull' ] ).then( ( result ) => {
+                // TODO: (garrett) If still up to date, just resolve, no npm or bower is needed
                 CMD('npm', ['install']).then(resolve).catch(reject);
             }).catch(reject);
         });

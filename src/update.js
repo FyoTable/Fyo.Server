@@ -23,8 +23,14 @@ function RunUpdateStart() {
         console.log('node server updated');
         updater.UpdateSoftware()
             .then( StartServer )
-            .catch( (err) => console.log( err ) );
-    }).catch( (err) => console.log( err ) );
+            .catch( (err) => {
+                console.log( err );
+                StartServer();
+             });
+    }).catch( (err) => {
+        console.log( err );
+        StartServer();
+     });
 }
 
 RunUpdateStart();
