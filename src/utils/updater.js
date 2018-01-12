@@ -123,7 +123,7 @@ Updater.prototype = {
         return Promise.all(software.map(x => {
                 return new Promise( (success, reject ) => {
                     try {
-                        download(process.env.PORTAL_ENDPOINT + '/updates/' + x.url, dir).then( success ).catch( reject );
+                        download(process.env.PORTAL_ENDPOINT + '/apk/' + x.apk, dir).then( success ).catch( reject );
                     } catch( err ) {
                         console.log( 'Failed to download', err );
                         reject( err );
