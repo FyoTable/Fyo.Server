@@ -92,7 +92,7 @@ Updater.prototype = {
                     } else {
                         console.log( 'package is not installed');
                         // install it
-                        return self.installAPK(x.url)
+                        return self.installAPK(x.apk)
                             .then(() => {
                                 console.log('apk installed');
                                 config.UpdateSoftware(x);
@@ -161,7 +161,7 @@ Updater.prototype = {
         return new Promise(function(success, reject) {
             var su = new SU();
             su.start((__dirname + '/../../updates/')).then( success ).catch( reject );
-            su.run('pm install ' + apk);
+            su.run('pm install "' + apk + '"');
             su.exit();
         });
     },
@@ -170,7 +170,7 @@ Updater.prototype = {
         return new Promise(function(success, reject) {
             var su = new SU();
             su.start((__dirname + '/../../updates/')).then( success ).catch( reject );
-            su.run('pm uninstall ' + apk);
+            su.run('pm uninstall "' + apk + '"');
             su.exit();
         });
     },
