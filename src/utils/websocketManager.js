@@ -7,16 +7,24 @@ var fs = require('fs');
 var config = require('./config.js');
 
 function WebSocketManager() {
-
+    this.connected = false;
 }
 
 WebSocketManager.prototype = {
+    connected: false,
+
     connect: function() {
+        if(this.connected) {
+            return;
+        }
+        var self = this;
+        
         console.log('WebSocket Connect');
 
         var socket = io('http://mqtt.fyo.io');
         socket.on('connect', function(){
             console.log('connected');
+            self.connected = true;
             socket.emit('device', config.Get('id'));
         });
 
