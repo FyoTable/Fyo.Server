@@ -17,9 +17,10 @@ WebSocketManager.prototype = {
         var socket = io('http://mqtt.fyo.io');
         socket.on('connect', function(){
             console.log('connected');
+            socket.emit('device', config.Get('id'));
         });
 
-        socket.on('screenshot', function() {
+        socket.on('capture', function() {
             console.log('Screenshot requested');
 
             var s = new su();
