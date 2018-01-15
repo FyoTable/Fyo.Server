@@ -7,7 +7,7 @@ console.log('   ip included');
 
 // Use MQQT to tell Fyo devices to connect to web socket of portal
 var mqtt = require('mqtt');
-console.log('   mqqt required');
+console.log('   mqqt required', mqqt);
 
 var client  = mqtt.connect(process.env.MQQT_URL, {
     username: process.env.MQQT_USERNAME,
