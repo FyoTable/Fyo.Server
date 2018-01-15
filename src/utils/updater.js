@@ -72,11 +72,11 @@ Updater.prototype = {
             return new Promise( (resolve, reject ) => {
                 // check if package installed
                 self.getPackages().then( (packages) => {
-                    if( packages.indexOf( x.pkg ) > -1) {
-                        console.log(x.pkg, 'package is installed');
+                    if( packages.indexOf( x.package ) > -1) {
+                        console.log(x.package, 'package is installed');
 
                         // uninstall it
-                        return self.uninstallAPK(x.id).then(() => {
+                        return self.uninstallAPK(x.package).then(() => {
                             console.log('Uninstalled package', x.id);
                             // install it
                             return self.installAPK(x.apk)
