@@ -1,14 +1,20 @@
 require('dotenv').config();
-config = require('../utils/config.js'),
-IP = require('../utils/ip.js');
+console.log('   dotenv configured');
+var config = require('../utils/config.js');
+console.log('   config gathered');
+var IP = require('../utils/ip.js');
+console.log('   ip included');
 
 // Use MQQT to tell Fyo devices to connect to web socket of portal
 var mqtt = require('mqtt');
+console.log('   mqqt required');
 
 var client  = mqtt.connect(process.env.MQQT_URL, {
     username: process.env.MQQT_USERNAME,
     password: process.env.MQQT_PASSWORD
 });
+
+console.log('   client connect invoked');
 
 client.on('connect', function () {
     var FyoTableId = config.Get('id');
@@ -68,3 +74,5 @@ client.on('message', function (topic, message) {
 client.on('error', function(err) {
     console.log('mqqt err', err);
 })
+
+console.log('   end of test file');
