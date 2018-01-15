@@ -14,7 +14,7 @@ WebSocketManager.prototype = {
     connect: function() {
         console.log('WebSocket Connect');
 
-        var socket = io('http://mqqt.fyo.io');
+        var socket = io('http://mqtt.fyo.io');
         socket.on('connect', function(){
             console.log('connected');
         });

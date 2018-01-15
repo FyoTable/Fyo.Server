@@ -145,17 +145,17 @@ function Log_stderr(data) {
 }
 
 
-// Use MQQT to tell Fyo devices to connect to web socket of portal
+// Use MQTT to tell Fyo devices to connect to web socket of portal
 var mqtt = require('mqtt');
 
-var client  = mqtt.connect(process.env.MQQT_URL, {
-    username: process.env.MQQT_USERNAME,
-    password: process.env.MQQT_PASSWORD
+var client  = mqtt.connect(process.env.MQTT_URL, {
+    username: process.env.MQTT_USERNAME,
+    password: process.env.MQTT_PASSWORD
 });
 
 client.on('connect', function () {
     var FyoTableId = config.Get('id');
-    console.log('MQQT subscribed to:', FyoTableId);
+    console.log('MQTT subscribed to:', FyoTableId);
     client.subscribe(FyoTableId);
 
     // Get IP Address
@@ -209,7 +209,7 @@ client.on('message', function (topic, message) {
 });
 
 client.on('error', function(err) {
-    console.log('mqqt err', err);
+    console.log('mqtt err', err);
 })
 
 
