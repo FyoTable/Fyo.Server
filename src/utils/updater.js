@@ -55,10 +55,16 @@ Updater.prototype = {
                     });
 
                 } )
-                .catch(( err ) => console.log( err ));;
+                .catch(( err ) => {
+                    console.log( err );
+                    reject( err );
+                });;
 
             } )
-            .catch(( err ) => console.log( err ));;
+            .catch(( err ) => {
+                console.log( err ); 
+                reject( err );
+            });;
             
         });
     },
@@ -102,6 +108,7 @@ Updater.prototype = {
                     }
                 }).catch( ( err ) => {
                     console.log( ' failed to get packages ');
+                    reject( err );
                 });
             });
 
