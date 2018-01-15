@@ -2,6 +2,7 @@ var express = require('express'),
     fs = require('fs'),
     helpers = require('./utils/helpers.js'),
     CMD = require('./utils/cmd.js'),
+    IP = require('./utils/ip.js'),
     SU = require('./utils/su.js'),
     config = require('./utils/config.js'),
     qr = require('qr-image'),
@@ -143,6 +144,7 @@ function Log_stderr(data) {
     console.log(`stderr: ${data}`);
 }
 
+
 // Use MQQT to tell Fyo devices to connect to web socket of portal
 var mqtt = require('mqtt');
 
@@ -155,6 +157,21 @@ client.on('connect', function () {
     var FyoTableId = config.Get('id');
     console.log('MQQT subscribed to:', FyoTableId);
     client.subscribe(FyoTableId);
+
+    // Get IP Address
+    IP.v4().then(function(ips) {
+        // Send IP Address
+        for(var i = 0; i < ips.length; i++) {
+            if(ips[i].type == process.env.PRIMARY_NETWORK || 'wlan0') {
+                console.log('Sending network', ips[i]);
+                client.publish('ip-address', {
+                    id: FyoTableId,
+                    ipaddr: ips[i].ip
+                });
+                return;
+            }
+        }
+    });
 });
 
 client.on('message', function (topic, message) {
