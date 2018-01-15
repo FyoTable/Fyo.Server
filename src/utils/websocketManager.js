@@ -20,16 +20,16 @@ WebSocketManager.prototype = {
         });
 
         socket.on('screenshot', function() {
+            console.log('Screenshot requested');
+
             var s = new su();
             s.start();
 
             var path =  '/sdcard/screen.png';
 
-            s.run('screencap ' + path);
-
-            // Read /sdcard/screen.png
-
-            setTimeout(function() {
+            s.run('screencap ' + path).then(function(result) {
+                console.log(result);
+                // Read /sdcard/screen.png
                 if(fs.existsSync(path)) {
                     let contents = fs.readFileSync(path);
                     var FyoTableId = config.Get('id');
@@ -41,7 +41,7 @@ WebSocketManager.prototype = {
                 } else {
                     console.log('screenshot not found at ', path);
                 }
-            }, 500);
+            });
 
         });
 
