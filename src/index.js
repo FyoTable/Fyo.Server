@@ -208,6 +208,10 @@ client.on('message', function (topic, message) {
 
 });
 
+client.on('error', function(err) {
+    console.log('mqqt err', err);
+})
+
 
 websocketManager.connect();
 
