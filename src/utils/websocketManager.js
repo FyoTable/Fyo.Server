@@ -31,12 +31,11 @@ WebSocketManager.prototype = {
         socket.on('capture', function() {
             console.log('Screenshot requested');
 
-            var s = new su();
-            s.start();
 
             var path =  '/sdcard/screen.png';
 
-            s.run('screencap ' + path).then(function(result) {
+            var s = new su();
+            s.start().then(function(result) {
                 console.log(result);
                 // Read /sdcard/screen.png
                 if(fs.existsSync(path)) {
@@ -51,6 +50,8 @@ WebSocketManager.prototype = {
                     console.log('screenshot not found at ', path);
                 }
             });
+
+            s.run('screencap ' + path);
 
         });
 
