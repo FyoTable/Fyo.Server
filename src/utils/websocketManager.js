@@ -3,6 +3,7 @@ var io = require('socket.io-client');
 var su = require('./su.js');
 
 var fs = require('fs');
+var path = require('path');
 
 var config = require('./config.js');
 
@@ -32,9 +33,9 @@ WebSocketManager.prototype = {
             console.log('Screenshot requested');
 
 
-            var path =  __dirname + '/../../screen.png';
+            var path =  'screen.png';
 
-            var s = new su();
+            var s = new su(path.resolve(__dirname + '../../'));
             s.start().then(function(result) {
                 console.log(result);
                 // Read /sdcard/screen.png
