@@ -39,6 +39,8 @@ WebSocketManager.prototype = {
                 console.log(result);
                 // Read /sdcard/screen.png
                 if(fs.existsSync(path)) {
+                    console.log('image found, sending...');
+
                     let contents = fs.readFileSync(path);
                     var FyoTableId = config.Get('id');
                     // post image
@@ -52,6 +54,7 @@ WebSocketManager.prototype = {
             });
 
             s.run('screencap ' + path);
+            s.exit();
 
         });
 
