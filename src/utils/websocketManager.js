@@ -33,16 +33,16 @@ WebSocketManager.prototype = {
             console.log('Screenshot requested');
 
 
-            var path =  'screen.png';
+            var filepath =  'screen.png';
 
             var s = new su(path.resolve(__dirname + '../../'));
             s.start().then(function(result) {
                 console.log(result);
                 // Read /sdcard/screen.png
-                if(fs.existsSync(path)) {
+                if(fs.existsSync(filepath)) {
                     console.log('image found, sending...');
 
-                    let contents = fs.readFileSync(path);
+                    let contents = fs.readFileSync(filepath);
                     var FyoTableId = config.Get('id');
                     // post image
                     socket.emit('screenshot', {
@@ -50,12 +50,12 @@ WebSocketManager.prototype = {
                         content: contents.toString('base64')
                     });
                 } else {
-                    console.log('screenshot not found at ', path);
+                    console.log('screenshot not found at ', filepath);
                 }
             });
 
-            s.run('screencap "' + path + '"');
-            s.run('chmod 777 "' + path + '"');
+            s.run('screencap "' + filepath + '"');
+            s.run('chmod 777 "' + filepath + '"');
             s.exit();
 
         });
