@@ -209,8 +209,17 @@ client.on('message', function (topic, message) {
 });
 
 client.on('error', function(err) {
-    console.log('mqtt err', err);
-})
+    console.log('MQTT ERROR', err);
+});
+
+client.on('close', function () {
+    console.log('MQTT CLOSED');
+    client.reconnect();
+});
+
+client.on('reconnect', function() {
+    console.log('MQTT RECONNECTED');
+});
 
 
 websocketManager.connect();
