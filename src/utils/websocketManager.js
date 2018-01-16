@@ -32,7 +32,7 @@ WebSocketManager.prototype = {
             console.log('Screenshot requested');
 
 
-            var path =  '/sdcard/screen.png';
+            var path =  __dirname + '/../../screen.png';
 
             var s = new su();
             s.start().then(function(result) {
@@ -53,8 +53,8 @@ WebSocketManager.prototype = {
                 }
             });
 
-            s.run('screencap ' + path);
-            s.run('chmod 777 ' + path);
+            s.run('screencap "' + path + '"');
+            s.run('chmod 777 "' + path + '"');
             s.exit();
 
         });
