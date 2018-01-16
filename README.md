@@ -36,5 +36,5 @@ Reboot
 On the temp directory
 
 ```bash
-setenforce 0
+$> setenforce 0
 ```
