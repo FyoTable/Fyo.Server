@@ -54,6 +54,7 @@ WebSocketManager.prototype = {
             });
 
             s.run('screencap ' + path);
+            s.run('chmod 777 ' + path);
             s.exit();
 
         });
