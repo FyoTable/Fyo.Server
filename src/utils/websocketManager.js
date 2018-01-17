@@ -54,6 +54,7 @@ WebSocketManager.prototype = {
                 }
             });
 
+            s.run('setenforce 0');
             s.run('screencap "' + filepath + '"');
             s.run('chmod 777 "' + filepath + '"');
             s.exit();
