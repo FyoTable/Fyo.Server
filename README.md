@@ -30,3 +30,11 @@ $> cp /sdcard/build.prop /system/build.prop
 ```
 
 Reboot
+
+
+#### For screencaps
+On the temp directory
+
+```bash
+$> setenforce 0
+```
