@@ -214,7 +214,7 @@ client.on('error', function(err) {
 
 client.on('close', function () {
     console.log('MQTT CLOSED');
-    client.reconnect();
+    //client.reconnect();
 });
 
 client.on('reconnect', function() {
