@@ -2,7 +2,8 @@ var EventManager = require('../../utils/eventManager.js'),
     colors = require('colors'),
     path = require('path'),
     fs = require('fs'),
-    AdmZip = require('adm-zip');
+    AdmZip = require('adm-zip'),
+    incoming = require('../../utils/incoming.js');
 
 function Application(io, socket, data) {
     this.io = io;
@@ -22,6 +23,12 @@ Application.prototype = {
         var self = this;
 
         console.log(colors.green('[GAME START]'), this.AppIDString);
+
+        incoming.setListener(function(data) {
+            self.socket.emit('SGconnectAttempt', {
+                SGID: data
+            });
+        });
 
 		this.SendToAdmin();
 

@@ -8,7 +8,8 @@ var express = require('express'),
     qr = require('qr-image'),
     path = require('path'),
     https = require('https'),
-    websocketManager = require('./utils/websocketManager');
+    websocketManager = require('./utils/websocketManager'),
+    incoming = require('./utils/incoming.js');
 const cors = require('cors');
 
 const { spawn } = require('child_process');
@@ -197,6 +198,9 @@ client.on('message', function (topic, message) {
                 var FyoTableId = config.Get('id');
                 console.log('publishing to ', FyoTableId);
                 client.publish('device-state', FyoTableId);
+            }
+            case 'connecting': {
+                incoming.fire(msg.SGID);
             }
             case 'websockets': {
                 websocketManager.connect();
