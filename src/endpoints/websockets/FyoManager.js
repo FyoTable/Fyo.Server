@@ -56,6 +56,8 @@ FyoManager.prototype = {
 
             if (this.activeApp) {
                 this.activeApp.SGConnected(socketGamePad)
+            } else {
+                console.log('no active app');
             }
         }
     },

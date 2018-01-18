@@ -25,6 +25,7 @@ Application.prototype = {
         console.log(colors.green('[GAME START]'), this.AppIDString);
 
         incoming.setListener(function(data) {
+            console.log('Incoming attempt');
             self.socket.emit('SGconnectAttempt', {
                 SGID: data
             });

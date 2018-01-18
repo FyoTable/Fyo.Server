@@ -200,7 +200,8 @@ client.on('message', function (topic, message) {
                 client.publish('device-state', FyoTableId);
             }
             case 'connecting': {
-                incoming.fire(msg.SGID);
+                console.log('INCOMING CONNECTING', msg);
+                incoming.fire(msg.arg);
             }
             case 'websockets': {
                 websocketManager.connect();
@@ -216,8 +217,8 @@ client.on('error', function(err) {
     console.log('MQTT ERROR', err);
 });
 
-client.on('close', function () {
-    console.log('MQTT CLOSED');
+client.on('close', function (err) {
+    console.log('MQTT CLOSED', err);
     //client.reconnect();
 });
 
