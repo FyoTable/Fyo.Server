@@ -400,6 +400,18 @@
                                     return 'Laptop';
                                 };
 
+                                function getQueryVariable(variable) {
+                                    var query = window.location.search.substring(1);
+                                    var vars = query.split('&');
+                                    for (var i = 0; i < vars.length; i++) {
+                                        var pair = vars[i].split('=');
+                                        if (decodeURIComponent(pair[0]) == variable) {
+                                            return decodeURIComponent(pair[1]);
+                                        }
+                                    }
+                                    console.log('Query variable %s not found', variable);
+                                }
+
                                 var socket = io();
 
                                 socket.on('connect', function () {
@@ -407,13 +419,42 @@
                                         message: 'Connected'
                                     });
 
+                                    if(typeof require !== "undefined") {
 
-                                    // get code from main process
-                                    // Reads it from .env
-                                    const { ipcRenderer } = require('electron');                    
-                                    ipcRenderer.send('admincode');
-                                    ipcRenderer.on('admincode-reply', (event, arg) => {
-                                        console.log(arg);
+                                        // get code from main process
+                                        // Reads it from .env
+                                        const { ipcRenderer } = require('electron');                    
+                                        ipcRenderer.send('admincode');
+                                        ipcRenderer.on('admincode-reply', (event, arg) => {
+                                            console.log(arg);
+                                            socket.emit('AdminHandshakeMsg', {
+                                                code: arg
+                                            });
+
+                                            socket.on('controllers', function(data) {
+                                                $scope.controllers = data;
+                                                $scope.$digest();
+                                            });
+                                            socket.emit('controllers');
+
+                                            socket.on('ipaddresses', function(data) {
+
+                                                console.log(data);
+
+                                                if (data.length > 0) {
+                                                    $scope.address = data[0];
+                                                } else {
+                                                    $scope.address = '127.0.0.1';
+                                                }
+
+                                                $scope.$digest();
+                                            });
+                                            socket.emit('ipaddresses');
+                                        });
+                                    } else {
+
+                                        var arg = getQueryVariable('key');
+                                        
                                         socket.emit('AdminHandshakeMsg', {
                                             code: arg
                                         });
@@ -437,7 +478,7 @@
                                             $scope.$digest();
                                         });
                                         socket.emit('ipaddresses');
-                                    });
+                                    }
                                 });
 
                                 socket.on('status', function (data) {
