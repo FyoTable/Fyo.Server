@@ -8,8 +8,9 @@ var FyoManager = require('./FyoManager.js'),
 module.exports.start = function(server, port) {
 	var io = require('socket.io')(server);
     var fyoManager = new FyoManager(io);
+    this.fyoManager = fyoManager;
     
-    io.on('connection', function (client) {
+    this.setupClient = (client) => {
         console.log(colors.green('[Connection]'), 'Socket connected via: ' + client.conn.transport.name);
 
         io.to('admin').emit('Connection', client.conn.transport.name);
@@ -110,7 +111,10 @@ module.exports.start = function(server, port) {
         }
 
         PingPongLatency();
-
-
-	});
+    };
+    io.on('connection', (client) => {
+        this.setupClient(client);
+    });
+    
+    return this;
 };

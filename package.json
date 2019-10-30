@@ -31,7 +31,8 @@
     "rtc-switchboard": "^3.2.0",
     "signalr-client": "0.0.17",
     "socket.io": "^2.0.4",
-    "socket.io-client": "^2.0.4",
+    "socket.io-client": "^2.2.0",
+    "uuid": "^3.3.3",
     "webrtc.io": "0.0.4"
   },
   "devDependencies": {}

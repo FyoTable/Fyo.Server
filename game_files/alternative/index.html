@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 
     <!-- Base Fyo css -->
-    <link rel="stylesheet" href="/fyogametable/dist/fyo.css">
+    <link rel="stylesheet" href="../fyogametable/dist/fyo.css">
     <!-- Specific to this controller -->
-    <link rel="stylesheet" href="/base_controller/base_styles.css">
+    <link rel="stylesheet" href="../base_controller/base_styles.css">
 </head>
 <body>
     <div id="mainContainer">
@@ -20,18 +20,27 @@
     <script src="/socket.io/socket.io.js"></script>
 
     <!-- Three.js is only required if using FyoGameTable.3DControls -->
-    <script src="/threejs/build/three.min.js"></script>
-    <script src="/threejs/examples/js/loaders/OBJLoader.js"></script>
+    <script src="../threejs/build/three.min.js"></script>
+    <script src="../threejs/examples/js/loaders/OBJLoader.js"></script>
 
     <!-- Minified Fyo Scripts -->
-    <script src="/fyogametable/dist/fyo.min.js"></script>
+    <script src="../fyogametable/dist/fyo.js"></script>
 
     <!-- Controller specific setup -->
     <script>
+        function getCookieValue(a) {
+            var b = document.cookie.match('(^|[^;]+)\\s*' + a + '\\s*=\\s*([^;]+)');
+            return b ? b.pop() : '';
+        }
+        console.log(getCookieValue, getCookieValue('device'));
 
         var playerId = 0;
 
-        var connecter = new FYO.FyoConnection('alternative');
+        var connecter = new FYO.FyoConnection('alternative', null, function(socket) {
+            // connected
+            console.log('fyo-client!');
+            // socket.emit('fyo-client', '123');
+        });
         connecter.AddVisualLatency();
 
         ////////////////////////////////
