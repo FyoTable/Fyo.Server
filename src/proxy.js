@@ -1,8 +1,10 @@
 const socketio = require('socket.io-client');
 const ProxyClient = require('./proxyClient.js');
-config = require('./utils/config.js'),
+const config = require('./utils/config.js');
 
-function Proxy(websocketsControl, cb) {
+function ProxyHandle(websocketsControl, cb) {
+    console.log('Start Proxy');
+
     this.webRequestCallbacks = [];
     // this.socket = socketio('http://localhost:38082');
     
@@ -65,4 +67,4 @@ function Proxy(websocketsControl, cb) {
     });
 }
 
-module.exports = Proxy;
+module.exports = ProxyHandle;
