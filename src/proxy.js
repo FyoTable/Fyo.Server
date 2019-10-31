@@ -56,6 +56,7 @@ function ProxyHandle(websocketsControl, cb) {
     proxy('SGDisconnectMsg');
     proxy('SGReconnectMsg');
     proxy('SGRedirectMsg');
+    proxy('Games');
     proxy('info');
 
     this.socket.on('Disconnect-Proxy', (id) => {
