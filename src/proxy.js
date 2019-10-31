@@ -83,6 +83,7 @@ function Proxy(websocketsControl, cb) {
     proxy('SGTimingOutMsg');
     proxy('SGDisconnectMsg');
     proxy('SGReconnectMsg');
+    proxy('SGRedirectMsg');
     proxy('info');
 
     this.socket.on('Disconnect-Proxy', (id) => {
