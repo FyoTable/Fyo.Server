@@ -1,5 +1,6 @@
 const socketio = require('socket.io-client');
 const uuidv1 = require('uuid/v1');
+config = require('./utils/config.js'),
 
 function ProxyClient(socket, id) {
     this.conn = {
@@ -39,7 +40,7 @@ function Proxy(websocketsControl, cb) {
     
     this.socket.on('connect', () => {
         console.log('connected to proxy');
-        this.socket.emit('fyo-server', '123');
+        this.socket.emit('fyo-server', config.Get('id'));
         cb && cb();
     });
     this.onWebRequest = (cb) => {
