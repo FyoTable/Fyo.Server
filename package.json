@@ -9,7 +9,7 @@
   },
   "main": "src/main.js",
   "dependencies": {
-    "@aspnet/signalr-client": "^1.0.0-alpha2-final",
+    "@microsoft/signalr": "^8.0.0",
     "adm-zip": "^0.4.7",
     "bower": "^1.8.2",
     "colors": "^1.1.2",
@@ -29,11 +29,12 @@
     "rtc": "^3.4.0",
     "rtc-switch": "^1.3.0",
     "rtc-switchboard": "^3.2.0",
-    "signalr-client": "0.0.17",
     "socket.io": "^2.0.4",
     "socket.io-client": "^2.2.0",
     "uuid": "^3.3.3",
     "webrtc.io": "0.0.4"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "electron": "^31.0.2"
+  }
 }
